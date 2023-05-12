@@ -1,0 +1,95 @@
+﻿@inherits RocketContentAPI.Components.RocketContentAPITokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI;
+@using Simplisity;
+@using RocketContentAPI.Components;
+@using DNNrocketAPI.Components;
+@using RocketPortal.Components;
+
+
+@{
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+}
+
+@foreach (var articleRowData in articleData.GetRows())
+{
+    var info = articleRowData.Info;
+    if (!info.GetXmlPropertyBool("genxml/checkbox/hiderow"))
+    {
+        <div class="">
+            <h1 class="">
+                @info.GetXmlProperty("genxml/textbox/title")
+            </h1>
+        </div>
+        <div class="gblockswrapper">
+
+            <!-- Pas de css existant pour les titres donc à voir quoi faire -->
+
+            @{
+                var datalist = articleRowData.GetImageList();
+                var index = 0;
+            }
+            <div class="gblocks">
+                @foreach (var imgInfo in datalist)
+                {
+                    index++;
+                    var articleImage = new ArticleImage(imgInfo, "articleimage");
+                    if (articleImage.RelPath != "")
+                    {
+
+                        if (info.GetXmlPropertyInt("genxml/imagelist/genxml[" + @index + "]/hidden/rbllink") == 0)
+                        {
+                            var externalURL = info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/externalhref");
+                            <div>
+                                <img src="@ThumbnailImageUrl(articleImage.RelPath, 400, 300)" alt="@info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/imagealtarticleimage")" />
+                                <div class="gblockstext">
+                                    <h2>
+                                        @info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/title")
+                                    </h2>
+                                    <h3>
+                                        @info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/text")
+                                    </h3>
+                                </div>
+                            </div>
+                        }
+                        if (info.GetXmlPropertyInt("genxml/imagelist/genxml[" + @index + "]/hidden/rbllink") == 1)
+                        {
+                            var tabddlvalue = PagesUtils.NavigateURL(info.GetXmlPropertyInt("genxml/imagelist/genxml[" + @index + "]/hidden/linktab"));
+                            <a href="@(tabddlvalue)">
+                                <img src="@ThumbnailImageUrl(articleImage.RelPath, 400, 300)" alt="@info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/imagealtarticleimage")" />
+                                <div class="gblockstext">
+                                    <h2>
+                                        @info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/title")
+                                    </h2>
+                                    <h3>
+                                        @info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/text")
+                                    </h3>
+                                </div>
+                            </a>
+                        }
+                        if (info.GetXmlPropertyInt("genxml/imagelist/genxml[" + @index + "]/hidden/rbllink") == 2)
+                        {
+                            var externalURL = info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/externalhref");
+                            <a href="@(externalURL)" target="_blank">
+                                <img src="@ThumbnailImageUrl(articleImage.RelPath, 400, 300)" alt="@info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/imagealtarticleimage")" />
+                                <div class="gblockstext">
+                                    <h2>
+                                        @info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/title")
+                                    </h2>
+                                    <h3>
+                                        @info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/text")
+                                    </h3>
+                                </div>
+                            </a>
+                        }
+
+
+                    }
+
+                }
+            </div>
+        </div>
+    }
+
+}
+
+

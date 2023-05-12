@@ -1,0 +1,16 @@
+﻿@inherits RocketContentAPI.Components.RocketContentAPITokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI;
+@using Simplisity;
+@using RocketContentAPI.Components;
+@using DNNrocketAPI.Components;
+@using RocketPortal.Components;
+
+
+@{
+    var articleRow = (ArticleRowLimpet)Model.GetDataObject("articlerow");
+    var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var info = articleRow.Info;
+}
+
+

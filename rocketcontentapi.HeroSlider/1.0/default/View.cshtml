@@ -1,0 +1,112 @@
+﻿@inherits RocketContentAPI.Components.RocketContentAPITokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI;
+@using Simplisity;
+@using RocketContentAPI.Components;
+@using DNNrocketAPI.Components;
+@using RocketPortal.Components;
+
+
+@{
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+    var appThemeView = (AppThemeLimpet)Model.GetDataObject("appthemeview");
+    var appThemeAdmin = (AppThemeLimpet)Model.GetDataObject("appthemeadmin");
+    var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var globalSettings = new SystemGlobalData();
+
+    AddProcessDataResx(appThemeView);
+    AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/");
+
+}
+<div class="slider-container">
+    <ul class="rslides" id="heroslider">
+        @foreach (var articleRowData in articleData.GetRows())
+        {
+            Model.SetDataObject("articlerow", articleRowData);
+            var info = articleRowData.Info;
+            var layout = info.GetXmlPropertyInt("genxml/select/layout");
+            var hStyle = info.GetXmlProperty("genxml/select/headingstyle");
+            var headingHide = info.GetXmlPropertyBool("genxml/checkbox/hideheading");
+            var hideRow = info.GetXmlPropertyBool("genxml/checkbox/hiderow");
+
+            var swclass = "";
+            var wclass = "w3-row";
+            if (info.GetXmlPropertyInt("genxml/textbox/rowwidth") > 0 && info.GetXmlPropertyInt("genxml/textbox/rowwidth") < 12)
+            {
+                swclass = "w3-col m" + ((12 - info.GetXmlPropertyInt("genxml/textbox/rowwidth")) / 2).ToString();
+                wclass = "w3-col m" + info.GetXmlPropertyInt("genxml/textbox/rowwidth");
+            }
+            var bgclass = "";
+            if (info.GetXmlPropertyBool("genxml/checkbox/backgroundcolor"))
+            {
+                bgclass = moduleData.Record.GetXmlProperty("genxml/settings/backgroundcolorclass");
+            }
+
+            if (!hideRow)
+            {
+
+        <div style="background:url('@info.GetXmlProperty("genxml/imagelist/genxml/hidden/imagepatharticleimage")') center center no-repeat;
+				    -webkit-background-size: cover;
+				    -moz-background-size: cover;
+				    -o-background-size: cover;
+				    background-size: cover;">
+
+            @if (swclass != "")
+            {
+                <div class="@swclass">&nbsp;</div>
+            }
+            <div class="caption">
+                <h2>@info.GetXmlProperty("genxml/lang/genxml/textbox/title")</h2>
+                <h3>@info.GetXmlProperty("genxml/lang/genxml/textbox/title2")</h3>
+                <p>@info.GetXmlProperty("genxml/lang/genxml/textbox/text")</p>
+            </div>
+
+            @if (swclass != "")
+            {
+                <div class="@swclass">&nbsp;</div>
+            }
+
+            <!-- Bouton de redirection avec gestion type de lien -->
+            @if (info.GetXmlPropertyInt("genxml/select/rbllink") == 1)
+            {
+                var tabddlvalue = PagesUtils.NavigateURL(info.GetXmlPropertyInt("genxml/select/linktab"));
+                <a class="bigbutton" href="@(tabddlvalue)">@info.GetXmlProperty("genxml/textbox/linktitle")</a>
+
+            }
+            @if (info.GetXmlPropertyInt("genxml/select/rbllink") == 2)
+            {
+                <a class="bigbutton" href="@info.GetXmlProperty("genxml/textbox/externalhref")" target="_blank">@info.GetXmlProperty("genxml/textbox/linktitle")</a>
+            }
+        </div>
+                
+
+            }
+
+        }
+    </ul>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#heroslider").responsiveSlides({
+            speed: 1000,
+            timeout: 4000,
+            pager: true,
+            nav: false
+        });
+
+        var vheight = $(window).height();
+        $('.slider-container').css('height', vheight - $('.header').height() + 'px');
+
+    });
+
+    $(window).resize(function () {
+        var vheight = $(window).height();
+        $('.slider-container').css('height', vheight - $('.header').height() + 'px');
+    });
+
+</script>
+
+
+

@@ -1,0 +1,56 @@
+﻿@inherits RocketContentAPI.Components.RocketContentAPITokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI;
+@using Simplisity;
+@using RocketContentAPI.Components;
+@using DNNrocketAPI.Components;
+@using RocketPortal.Components;
+
+
+@{
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+}
+
+@foreach (var articleRowData in articleData.GetRows())
+{
+    var info = articleRowData.Info;
+    if (!info.GetXmlPropertyBool("genxml/checkbox/hiderow"))
+    {
+        <div class="labelswrapper">
+            <h2>
+                @info.GetXmlProperty("genxml/textbox/title")
+            </h2>
+            <div class="labels">
+                @{
+                    var datalist = articleRowData.GetImageList();
+                    var index = 0;
+                }
+                @foreach (var imgInfo in datalist)
+                {
+                    var articleImage = new ArticleImage(imgInfo, "articleimage");
+                    if (articleImage.RelPath != "")
+                    {
+                        index++;
+                        <div class="label">
+                            @{
+                                if (@info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/imageredirectlink") != "")
+                                {
+                                    <a href="@info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/imageredirectlink")" target="_blank">
+                                        <img src="@ThumbnailImageUrl(articleImage.RelPath)" alt="@info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/imagealtarticleimage")" />
+                                    </a>
+                                }
+                                else
+                                {
+                                    <img src="@ThumbnailImageUrl(articleImage.RelPath)" alt="@info.GetXmlProperty("genxml/imagelist/genxml[" + @index + "]/hidden/imagealtarticleimage")" />
+                                }
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+
+    }
+}
+
+

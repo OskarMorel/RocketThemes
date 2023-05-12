@@ -1,0 +1,55 @@
+﻿@inherits RocketEcommerceAPI.Components.RocketEcommerceAPITokens<Simplisity.SimplisityRazor>
+@using Simplisity;
+@using RocketEcommerceAPI.Components;
+@using DNNrocketAPI.Components;
+@using RocketPortal.Components;
+
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketECommerce/App_LocalResources/")
+
+@{ 
+    var productData = (ProductLimpet)Model.GetDataObject("productdata");
+    var companyData = (CompanyLimpet)Model.GetDataObject("companydata");
+    var cartData = (CartLimpet)Model.GetDataObject("cartdata");
+    var sessionParams = (SessionParams)Model.SessionParamsData;
+    var portalShop = (PortalShopLimpet)Model.GetDataObject("portalshop");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");
+    var appTheme = (AppThemeLimpet)Model.GetDataObject("apptheme");
+    var categoryDataList = (CategoryLimpetList)Model.GetDataObject("categorylist");
+
+    var hbsDict = new Dictionary<string, SimplisityInfo>();
+    hbsDict.Add("sessionparams", sessionParams.Info);
+    hbsDict.Add("resxlist", RenderRazorUtils.GetResxPaths(Processdata));
+    hbsDict.Add("data", productData.Info);
+}
+
+@AddProcessData("resourcepath", appTheme.AppThemeVersionFolderRel + "/resx/")
+
+<div class="w3-row">
+    <div class="w3-threequarter">
+        <div class="w3-row">
+            @RenderHandleBarsRE(hbsDict, appTheme, "productdetail.hbs", remoteModule.ModuleRef, "")
+        </div>
+    </div>
+    <div class="w3-quarter">
+        <div id="minicartdisplay" class="productlistcart">
+            <div class="minicartdisplay">
+                <h3>@ResourceKey("RE.cart", sessionParams.CultureCode)</h3>
+                <div class="w3-border-bottom w3-margin-bottom ">
+                    <div>@ResourceKey("RE.items", sessionParams.CultureCode)&nbsp;:&nbsp;
+                        <span id="a-cartqty">&nbsp;</span>    
+                        <span class="w3-right"><strong><span id="a-carttotal">&nbsp;</span></strong></span>
+                    </div>
+                </div>
+                <a id="cartdisplay" class="w3-button w3-light-grey simplisity_click " s-cmdurl="@(sessionParams.ApiUrl)" s-before="clearMiniCartJson" s-return="#ecommerce-tag" s-cmd="rocketecommerceapi_cartlist" s-fields='{"template":"cartlist.cshtml","moduleref":"@(remoteModule.ModuleRef)"}'>@MaterialIcon("shopping_cart")&nbsp;@(ResourceKey("RE.viewcart", sessionParams.CultureCode))</a>
+            </div>
+        </div>
+        <div class="productlistcat">
+            @if (categoryDataList.DataList.Count > 0)
+            {
+                @RenderTemplate("CategorySideMenu.cshtml", appTheme, Model)                
+            }
+        </div>
+    </div>
+</div>

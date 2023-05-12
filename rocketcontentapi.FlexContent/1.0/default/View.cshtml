@@ -1,0 +1,167 @@
+﻿@inherits RocketContentAPI.Components.RocketContentAPITokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI;
+@using Simplisity;
+@using RocketContentAPI.Components;
+@using DNNrocketAPI.Components;
+@using RocketPortal.Components;
+
+
+@{
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+    var appThemeView = (AppThemeLimpet)Model.GetDataObject("appthemeview");
+    var appThemeAdmin = (AppThemeLimpet)Model.GetDataObject("appthemeadmin");
+    var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var globalSettings = new SystemGlobalData();
+
+    AddProcessDataResx(appThemeView);
+    AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/");
+
+
+    var columnClass = "";
+    <!-- Si le radio button n'est pas égal à celui par défaut -->
+    if (moduleData.Record.GetXmlProperty("genxml/settings/columns") != "def")
+    {
+        columnClass = moduleData.Record.GetXmlProperty("genxml/settings/columns");
+    }
+}
+<div class="flexcontent-wrapper @columnClass">
+
+    @foreach (var articleRowData in articleData.GetRows())
+    {
+        Model.SetDataObject("articlerow", articleRowData);
+        var info = articleRowData.Info;
+        var layout = info.GetXmlPropertyInt("genxml/select/layout");
+        var hStyle = info.GetXmlProperty("genxml/select/headingstyle");
+        var headingHide = info.GetXmlPropertyBool("genxml/checkbox/hideheading");
+        var hideRow = info.GetXmlPropertyBool("genxml/checkbox/hiderow");
+
+        var swclass = "";
+        var wclass = "w3-row";
+        if (info.GetXmlPropertyInt("genxml/textbox/rowwidth") > 0 && info.GetXmlPropertyInt("genxml/textbox/rowwidth") < 12)
+        {
+            swclass = "w3-col m" + ((12 - info.GetXmlPropertyInt("genxml/textbox/rowwidth")) / 2).ToString();
+            wclass = "w3-col m" + info.GetXmlPropertyInt("genxml/textbox/rowwidth");
+        }
+        var bgclass = "";
+        if (info.GetXmlPropertyBool("genxml/checkbox/backgroundcolor"))
+        {
+            bgclass = moduleData.Record.GetXmlProperty("genxml/settings/backgroundcolorclass");
+        }
+
+
+
+        if (!hideRow)
+        {
+            if (swclass != "")
+            {
+                <div class="@swclass">&nbsp;</div>
+            }
+
+            <div class="flexcontent-div">
+
+                @if (!headingHide)
+                {
+                    var title = info.GetXmlProperty("genxml/lang/genxml/textbox/title");
+                    var headingalignvalue = info.GetXmlPropertyInt("genxml/select/headingalign");
+                    var headingalign = "";
+                    if (headingalignvalue == 1)
+                    {
+                        headingalign = "w3-center";
+                    }
+                    if (headingalignvalue == 2)
+                    {
+                        headingalign = "w3-right";
+                    }
+
+                    if (hStyle == "")
+                    {
+                        hStyle = "h1";
+                    }
+
+                    if (title != "")
+                    {
+                        var alignText = info.GetXmlProperty("genxml/select/headingalign");
+                        if (hStyle.ToLower() == "h1")
+                        {
+                            <div class="flexcontent-text">
+                                <h1 style="text-align: @alignText;">@title</h1>
+                            </div>
+                        }
+                        if (hStyle.ToLower() == "h2")
+                        {
+                            <div class="flexcontent-text">
+                                <h2 style="text-align: @alignText;">@title</h2>
+                            </div>
+                        }
+                        if (hStyle.ToLower() == "h3")
+                        {
+                            <div class="flexcontent-text">
+                                <h3 style="text-align: @alignText;">@title</h3>
+                            </div>
+                        }
+                        if (hStyle.ToLower() == "h4")
+                        {
+                            <div class="flexcontent-text">
+                                <h4 style="text-align: @alignText;">@title</h4>
+                            </div>
+                        }
+
+                    }
+                }
+
+                @if (layout == 0)
+                {
+                    @RenderTemplate("layout0.cshtml", moduleData.ModuleRef, appThemeView, Model, true)
+                }
+                @if (layout == 1)
+                {
+                    @RenderTemplate("layout1.cshtml", moduleData.ModuleRef, appThemeView, Model, true)
+                }
+                @if (layout == 2)
+                {
+                    @RenderTemplate("layout2.cshtml", moduleData.ModuleRef, appThemeView, Model, true)
+                }
+                @if (layout == 3)
+                {
+                    @RenderTemplate("layout3.cshtml", moduleData.ModuleRef, appThemeView, Model, true)
+                }
+                @if (layout == 4)
+                {
+                    @RenderTemplate("layout4.cshtml", moduleData.ModuleRef, appThemeView, Model, true)
+                }
+                @if (info.GetXmlProperty("genxml/lang/genxml/textbox/htmltext") != "")
+                {
+                    @RenderTemplate("htmltext.cshtml", moduleData.ModuleRef, appThemeView, Model, true)
+                }
+                @if (articleRowData.GetDocList().Count > 0)
+                {
+                    @RenderTemplate("documents.cshtml", moduleData.ModuleRef, appThemeView, Model, true)
+                }
+
+                <!-- Pour la version de base, cf. HTMLContent -->
+                <div class="newspaper-link">
+                    @if (info.GetXmlPropertyInt("genxml/select/rbllink") == 1)
+                    {
+                        var tabddlvalue = PagesUtils.NavigateURL(info.GetXmlPropertyInt("genxml/select/linktab"));
+                        <a class="bigbutton" href="@(tabddlvalue)">@info.GetXmlProperty("genxml/textbox/linktitle")</a>
+                    }
+                    @if (info.GetXmlPropertyInt("genxml/select/rbllink") == 2)
+                    {
+                        var externalURL = info.GetXmlProperty("genxml/textbox/externalhref");
+                        <a class="bigbutton" href="@(externalURL)" target="_blank">@info.GetXmlProperty("genxml/textbox/linktitle")</a>
+                    }
+                </div>
+            </div>
+
+            if (swclass != "")
+            {
+                <div class="@swclass">&nbsp;</div>
+            }
+
+        }
+
+    }
+</div>
+
+

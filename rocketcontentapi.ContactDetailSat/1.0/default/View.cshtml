@@ -1,0 +1,43 @@
+﻿@inherits RocketContentAPI.Components.RocketContentAPITokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI;
+@using Simplisity;
+@using RocketContentAPI.Components;
+@using DNNrocketAPI.Components;
+@using RocketPortal.Components;
+
+
+@{
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+    var appThemeView = (AppThemeLimpet)Model.GetDataObject("appthemeview");
+    var appThemeAdmin = (AppThemeLimpet)Model.GetDataObject("appthemeadmin");
+    var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var globalSettings = new SystemGlobalData();
+
+    // Path to the resx file
+    AddProcessData("resourcepath", "/DesktopModules/RocketThemes/AppThemes-W3-CSS/rocketcontentapi.Contact/1.0/resx");
+
+}
+
+@foreach (var articleRowData in articleData.GetRows())
+{
+    var info = articleRowData.Info;
+
+    <div class="h4-headline">
+        Contactez-nous
+    </div>
+
+    <p>
+        <strong>@info.GetXmlProperty("genxml/lang/genxml/textbox/company")</strong>
+        <br />
+        Tél. : @info.GetXmlProperty("genxml/textbox/tel1")
+        <br />
+        E-Mail :
+        <a href="mailto:@info.GetXmlProperty("genxml/textbox/email")">@info.GetXmlProperty("genxml/textbox/email")</a>
+    </p>
+
+
+
+}
+
+

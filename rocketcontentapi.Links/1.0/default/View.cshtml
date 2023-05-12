@@ -1,0 +1,43 @@
+﻿@inherits RocketContentAPI.Components.RocketContentAPITokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI;
+@using Simplisity;
+@using RocketContentAPI.Components;
+@using DNNrocketAPI.Components;
+@using RocketPortal.Components;
+
+
+@{
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+
+}
+
+@foreach (var articleRowData in articleData.GetRows())
+{
+    var info = articleRowData.Info;
+    var index = 0;
+    // var imageurl = info.GetXmlProperty("genxml/imgs/genxml[1]/hidden/imageurl");
+    if (!info.GetXmlPropertyBool("genxml/checkbox/hiderow"))
+    {
+        <div class="about-content">
+            <h1>@info.GetXmlPropertyInt("genxml/rows/genxml[" + index + "]/radio/linktypearticlelink")</h1>
+            @if (info.GetXmlPropertyInt("genxml/genxml/genxml[" + index + "]/radio/linktypearticlelink") == 1)
+            {
+                var tabddlvalue = PagesUtils.NavigateURL(info.GetXmlPropertyInt("genxml/select/linktab"));
+                <div class="about-link">
+                    <a href="@(tabddlvalue)">@info.GetXmlProperty("genxml/textbox/linktitle")</a>
+                </div>
+            }
+            @if (info.GetXmlPropertyInt("genxml/genxml[" + index + "]/radio/linktypearticlelink") == 2)
+            {
+                <h1>La c'est good</h1>
+                var externalURL = info.GetXmlProperty("genxml/genxml[" + index + "]/textbox/externallinkarticlelink");
+                <div class="about-link">
+                    <a href="@(externalURL)" target="_blank">@info.GetXmlProperty("genxml/genxml[" + index + "]/textbox/namearticlelink")</a>
+                </div>
+            }
+        </div>
+        index += 1;
+    }
+}
+
+

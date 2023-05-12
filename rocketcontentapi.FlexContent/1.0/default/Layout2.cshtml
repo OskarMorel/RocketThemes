@@ -1,0 +1,43 @@
+﻿@inherits RocketContentAPI.Components.RocketContentAPITokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI;
+@using Simplisity;
+@using RocketContentAPI.Components;
+@using DNNrocketAPI.Components;
+@using RocketPortal.Components;
+
+
+@{
+    var articleRow = (ArticleRowLimpet)Model.GetDataObject("articlerow");
+    var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var info = articleRow.Info;
+}
+
+<div class="flexcontent-text">
+    @HtmlOf(info.GetXmlProperty("genxml/lang/genxml/textbox/richtext"))
+</div>
+
+
+@{
+    var datalist = articleRow.GetImageList();
+    var index = 0;
+}
+<div class="flexcontent-media fcm-bottom">
+    <div class="fcd-images">
+
+
+        @foreach (var imgInfo in datalist)
+        {
+            var articleImage = new ArticleImage(imgInfo, "articleimage");
+            if (articleImage.RelPath != "")
+            {
+                index++;
+                <div>
+                    <img src="@ThumbnailImageUrl(articleImage.RelPath)" />
+                </div>
+
+            }
+        }
+    </div>
+</div>
+
